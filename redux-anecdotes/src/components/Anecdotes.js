@@ -1,32 +1,39 @@
 import React from "react";
 import { addVote } from "../reducers/anecdoteReducer";
-import { useSelector, useDispatch } from "react-redux";
+import { connect } from "react-redux";
 
-export default function Anecdotes() {
-  const anecdotes = useSelector((state) => {
-    if (state.filter === "ALL") return state.anecdotes;
-
-    return state.anecdotes.filter((ancedote) =>
-      ancedote.content.toLowerCase().includes(state.filter.toLowerCase())
-    );
-  });
-  const dispatch = useDispatch();
-
-  const vote = async (anecdote) => {
-    dispatch(addVote(anecdote));
-  };
-
+const Anecdotes = (props) => {
   return (
     <>
-      {anecdotes.map((anecdote) => (
+      {props.anecdotes.map((anecdote) => (
         <div key={anecdote.id}>
           <div>{anecdote.content}</div>
           <div>
             has {anecdote.votes}
-            <button onClick={() => vote(anecdote)}>vote</button>
+            <button onClick={() => props.addVote(anecdote)}>vote</button>
           </div>
         </div>
       ))}
     </>
   );
-}
+};
+
+const mapStateToProps = (state) => {
+  if (state.filter === "ALL") {
+    return { anecdotes: state.anecdotes };
+  } else {
+    return {
+      anecdotes: state.anecdotes.filter((anecdote) =>
+        anecdote.content.toLowerCase().includes(state.filter.toLowerCase())
+      ),
+    };
+  }
+};
+
+const mapDispatchToProps = { addVote };
+
+const ConnectedAnecdotes = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Anecdotes);
+export default ConnectedAnecdotes;

@@ -14,7 +14,7 @@ export const addVote = (anecdote) => {
 
 export const createAnecdote = (data) => {
   return async (dispatch) => {
-    const newAnecdote = anecdoteService.createNew(data);
+    const newAnecdote = await anecdoteService.createNew(data);
     dispatch({
       type: "ANECDOTE_ADD",
       data: newAnecdote,
@@ -50,7 +50,7 @@ const anecdoteReducer = (state = [], action) => {
       let anecdoteAddState = [...state];
       return sortAnecdotes(anecdoteAddState.concat(newAnecdote));
     case "INIT_ANECDOTES":
-      return sortAnecdotes(action.data);
+      return sortAnecdotes([...action.data]);
     default:
       return sortAnecdotes(state);
   }
